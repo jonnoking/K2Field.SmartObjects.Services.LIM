@@ -63,6 +63,18 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Property("Priority", SoType.Number, "Priority", "Priority")]
         public int Priority { get; set; }
 
+        [Attributes.Property("NewVersion", SoType.Number, "New Version", "New Version")]
+        public int NewVersion { get; set; }
+
+        [Attributes.Property("ActivityName", SoType.Text, "Activity Name", "Activity Name")]
+        public string ActivityName { get; set; }
+
+        [Attributes.Property("ResultStatus", SoType.Text, "Result Status", "Result Status")]
+        public string ResultStatus { get; set; }
+
+        [Attributes.Property("ResultMessage", SoType.Text, "Result Message", "Result Message")]
+        public string ResultMessage { get; set; }
+
         //[Attributes.Property("IsDefaultVersion", SoType.Text, "Is Default Version", "Is Default Version")]
         //public bool IsDefaultVersion { get; set; }
 
@@ -83,7 +95,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("GetRunningProcessInstance", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Get Running Process Instance", "Get Running Process Instance",
         new string[] { "ProcessInstanceId" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessid", "FullName", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
+        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessId", "FullName", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority", "ResultStatus" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
         public LIM.ProcessInstance GetProcessInstance()
         {
             WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
@@ -117,6 +129,8 @@ namespace K2Field.SmartObjects.Services.LIM
                 //this.VersionNumber = instances[0].Process.VersionNumber;
             }
 
+            svr.Connection.Close();
+            svr.Connection.Dispose();
             svr = null;
 
             return this;
@@ -125,7 +139,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("GetRunningProcessInstanceByVersion", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.List, "Get Running Process Instance By Version", "Get Process Instance By Version",
         new string[] { "ProcessId" }, //required property array (no required properties for this sample)
         new string[] { "ProcessId"}, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessid", "FullName", "Name", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
+        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessId", "FullName", "Name", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
         public List<LIM.ProcessInstance> GetRunningProcessInstanceByVersion()
         {
             List<LIM.ProcessInstance> results = new List<ProcessInstance>();
@@ -164,9 +178,55 @@ namespace K2Field.SmartObjects.Services.LIM
 
                 results.Add(pi);
             }
+            svr.Connection.Close();
+            svr.Connection.Dispose();
+            svr = null;
 
             return results;
         }
 
+        [Attributes.Method("MigrateProcessInstance", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Migrate Process Instance", "Migrate process instance from one version to another version",
+        new string[] { "ProcessInstanceId", "NewVersion" }, //required property array (no required properties for this sample)
+        new string[] { "ProcessInstanceId", "NewVersion", "ActivityName" }, //input property array (no optional input properties for this sample)
+        new string[] { "ProcessInstanceId", "NewVersion", "ActivityName",  "ResultStatus" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
+        public LIM.ProcessInstance MigrateProcessInstance()
+        {
+            List<LIM.ProcessInstance> results = new List<ProcessInstance>();
+
+            WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
+            svr.Open();
+            
+            try
+            {
+                svr.StopProcessInstances(this.ProcessInstanceId);
+            }
+            catch (Exception ex)
+            {
+                //forcedStop = false;
+                this.ResultStatus = ex.Message;
+                return this;
+            }
+            //migrate the instance to the selected version
+            svr.SetProcessInstanceVersion(this.ProcessInstanceId, this.NewVersion);
+            //restart the instance if it was stopped
+            
+            if (!string.IsNullOrWhiteSpace(this.ActivityName))
+            {
+                svr.GotoActivity(this.ProcessInstanceId, ActivityName);
+                //svr.StartProcessInstances(procInst.ID);
+            }
+            else
+            {
+                svr.StartProcessInstances(this.ProcessInstanceId);
+            }
+
+            this.ResultStatus = "Success";
+
+            svr.Connection.Close();
+            svr.Connection.Dispose();
+            svr = null;
+
+            return this;
+        }
     }
 }

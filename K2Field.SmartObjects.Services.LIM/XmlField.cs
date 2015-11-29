@@ -42,14 +42,17 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Property("ProcessInstanceId", SoType.Number, "Process Instance Id", "Process Instance Id")]
         public int ProcessInstanceId { get; set; }
 
-        [Attributes.Property("Status", SoType.Number, "Status", "Status")]
-        public string Status { get; set; }
+        [Attributes.Property("ResultStatus", SoType.Number, "Result Status", "Result Status")]
+        public string ResultStatus { get; set; }
+
+        [Attributes.Property("ResultMessage", SoType.Text, "Result Message", "Result Message")]
+        public string ResultMessage { get; set; }
 
 
         [Attributes.Method("GetXmlFields", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.List, "Get Xml Fields", "Get Xml Fields",
         new string[] { "ProcessInstanceId" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "Status" })]
+        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl" })]
         public List<LIM.XmlField> GetProcessInstanceXmlFields()
         {
             List<LIM.XmlField> result = new List<LIM.XmlField>();
@@ -87,7 +90,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("GetDataField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Get Data Field", "Get Data Field",
         new string[] { "ProcessInstanceId", "Name" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId", "Name" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "Status" })]
+        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "Status", "ResultStatus", "ResultMessage" })]
         public LIM.XmlField GetProcessInstanceDataField()
         {
             SourceCode.Workflow.Client.Connection k2con = new SourceCode.Workflow.Client.Connection();
@@ -119,7 +122,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("UpdateDataField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Update Data Field", "Update Data Field",
         new string[] { "ProcessInstanceId", "Name", "Value" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId", "Name", "Value" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "Status" })]
+        new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "ResultStatus", "ResultMessage" })]
         public LIM.XmlField UpdateDataField()
         {
             SourceCode.Workflow.Client.Connection k2con = new SourceCode.Workflow.Client.Connection();
