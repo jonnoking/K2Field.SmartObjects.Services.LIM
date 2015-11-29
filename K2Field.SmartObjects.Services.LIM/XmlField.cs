@@ -27,7 +27,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Property("Hidden", SoType.YesNo, "Hidden", "Hidden")]
         public bool Hidden { get; set; }
 
-        [Attributes.Property("Metadata", SoType.YesNo, "Metadata", "Metadata")]
+        [Attributes.Property("Metadata", SoType.Text, "Metadata", "Metadata")]
         public string Metadata { get; set; }
 
         [Attributes.Property("Schema", SoType.YesNo, "Schema", "Schema")]
@@ -87,7 +87,7 @@ namespace K2Field.SmartObjects.Services.LIM
             return result;
         }
 
-        [Attributes.Method("GetDataField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Get Data Field", "Get Data Field",
+        [Attributes.Method("GetXmlField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Get Xml Field", "Get Xml Field",
         new string[] { "ProcessInstanceId", "Name" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId", "Name" }, //input property array (no optional input properties for this sample)
         new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "Status", "ResultStatus", "ResultMessage" })]
@@ -119,7 +119,7 @@ namespace K2Field.SmartObjects.Services.LIM
             return this;
         }
 
-        [Attributes.Method("UpdateDataField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Update Data Field", "Update Data Field",
+        [Attributes.Method("UpdateXmlField", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Update Xml Field", "Update Xml Field",
         new string[] { "ProcessInstanceId", "Name", "Value" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId", "Name", "Value" }, //input property array (no optional input properties for this sample)
         new string[] { "ProcessInstanceId", "Name", "Value", "Category", "Hidden", "Metadata", "Schema", "Xsl", "ResultStatus", "ResultMessage" })]

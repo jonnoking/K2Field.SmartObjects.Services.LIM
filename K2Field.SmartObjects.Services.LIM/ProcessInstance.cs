@@ -12,10 +12,7 @@ using SourceCode.Workflow.Management;
 namespace K2Field.SmartObjects.Services.LIM
 {
     /*
-     * Get Process Version(procinstanceid)
-     * Get Process Instances for a Version
-     * Get Activities Per Process Version
-     * Move Process Instance to a new version
+     * exception handling
      * */
 
     [Attributes.ServiceObject("LIMProcessInstance", "LIM Process Instance", "LIM Process Instance")]
@@ -95,7 +92,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("GetRunningProcessInstance", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Get Running Process Instance", "Get Running Process Instance",
         new string[] { "ProcessInstanceId" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessId", "FullName", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority", "ResultStatus" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
+        new string[] { "ProcessInstanceId", "ProcessSetId", "ProcessId", "ExecutingProcessId", "FullName", "Folio", "Originator", "Status", "ExpectedDuraction", "StartDate", "FinishDate", "Priority", "ResultStatus", "ResultMessage" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
         public LIM.ProcessInstance GetProcessInstance()
         {
             WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
@@ -188,7 +185,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Method("MigrateProcessInstance", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Migrate Process Instance", "Migrate process instance from one version to another version",
         new string[] { "ProcessInstanceId", "NewVersion" }, //required property array (no required properties for this sample)
         new string[] { "ProcessInstanceId", "NewVersion", "ActivityName" }, //input property array (no optional input properties for this sample)
-        new string[] { "ProcessInstanceId", "NewVersion", "ActivityName",  "ResultStatus" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
+        new string[] { "ProcessInstanceId", "NewVersion", "ActivityName", "ResultStatus", "ResultMessage" })] // , "IsDefaultVersion", "VersionDate", "VersionDescription", "VersionLabel", "VersionNumber"
         public LIM.ProcessInstance MigrateProcessInstance()
         {
             List<LIM.ProcessInstance> results = new List<ProcessInstance>();

@@ -26,7 +26,7 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Property("Hidden", SoType.YesNo, "Hidden", "Hidden")]
         public bool Hidden { get; set; }
 
-        [Attributes.Property("Metadata", SoType.YesNo, "Metadata", "Metadata")]
+        [Attributes.Property("Metadata", SoType.Text, "Metadata", "Metadata")]
         public string Metadata { get; set; }
 
         [Attributes.Property("ValueType", SoType.Text, "ValueType", "ValueType")]
@@ -70,7 +70,7 @@ namespace K2Field.SmartObjects.Services.LIM
                     df.Category = k2pi.DataFields[i].Category;
                     df.Metadata = k2pi.DataFields[i].MetaData;
                     df.Hidden = k2pi.DataFields[i].Hidden;
-                    df.ValueType = k2pi.DataFields[i].ValueType.ToString();
+                    df.ValueType = k2pi.DataFields[i].ValueType.ToString().Replace("Type", "");
 
                     result.Add(df);
                 }
@@ -102,7 +102,7 @@ namespace K2Field.SmartObjects.Services.LIM
                     this.Category = k2pi.DataFields[Name].Category;
                     this.Metadata = k2pi.DataFields[Name].MetaData;
                     this.Hidden = k2pi.DataFields[Name].Hidden;
-                    this.ValueType = k2pi.DataFields[Name].ValueType.ToString();
+                    this.ValueType = k2pi.DataFields[Name].ValueType.ToString().Replace("Type", "");
                 }
             }
             k2con.Close();
