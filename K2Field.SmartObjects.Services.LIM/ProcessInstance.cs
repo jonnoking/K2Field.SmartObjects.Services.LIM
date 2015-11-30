@@ -66,6 +66,9 @@ namespace K2Field.SmartObjects.Services.LIM
         [Attributes.Property("ActivityName", SoType.Text, "Activity Name", "Activity Name")]
         public string ActivityName { get; set; }
 
+        [Attributes.Property("SecondActivityName", SoType.Text, "Second Activity Name", "Second Activity Name")]
+        public string SecondActivityName { get; set; }
+
         [Attributes.Property("ResultStatus", SoType.Text, "Result Status", "Result Status")]
         public string ResultStatus { get; set; }
 
@@ -96,39 +99,55 @@ namespace K2Field.SmartObjects.Services.LIM
         public LIM.ProcessInstance GetProcessInstance()
         {
             WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
-            svr.Open();
-            ProcessInstances instances = null;
-
-            SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter filter = new SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter();
-            filter.AddRegularFilter(ProcessInstanceFields.ProcInstID, SourceCode.Workflow.Management.Criteria.Comparison.Equals, this.ProcessInstanceId);
-
-            instances = svr.GetProcessInstancesAll(filter);
-
-            if (instances != null & instances.Count > 0)
+            try
             {
-                this.ExecutingProcessId = instances[0].ExecutingProcID;
-                this.ExpectedDuration = instances[0].ExpectedDuration;
-                this.FinishDate = instances[0].FinishDate;
-                this.Folio = instances[0].Folio;
-                this.FullName = instances[0].ProcSetFullName;
-                //this.IsDefaultVersion = instances[0].Process.DefaultVersion;
-                //this.Name = instances[0].Process.FullName;
-                this.Originator = instances[0].Originator;
-                this.Priority = instances[0].Priority;
-                this.ProcessId = instances[0].ProcID;
-                this.ProcessInstanceId = instances[0].ID;
-                this.ProcessSetId = instances[0].ProcSetID;
-                this.StartDate = instances[0].StartDate;
-                this.Status = instances[0].Status;
-                //this.VersionDescription = instances[0].Process.VersionDesc;
-                //this.VersionDate = instances[0].Process.VersionDate;
-                //this.VersionLabel = instances[0].Process.VersionLabel;
-                //this.VersionNumber = instances[0].Process.VersionNumber;
-            }
+                svr.Open();
+                ProcessInstances instances = null;
 
-            svr.Connection.Close();
-            svr.Connection.Dispose();
-            svr = null;
+                SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter filter = new SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter();
+                filter.AddRegularFilter(ProcessInstanceFields.ProcInstID, SourceCode.Workflow.Management.Criteria.Comparison.Equals, this.ProcessInstanceId);
+
+                instances = svr.GetProcessInstancesAll(filter);
+
+                if (instances != null & instances.Count > 0)
+                {
+                    this.ExecutingProcessId = instances[0].ExecutingProcID;
+                    this.ExpectedDuration = instances[0].ExpectedDuration;
+                    this.FinishDate = instances[0].FinishDate;
+                    this.Folio = instances[0].Folio;
+                    this.FullName = instances[0].ProcSetFullName;
+                    //this.IsDefaultVersion = instances[0].Process.DefaultVersion;
+                    //this.Name = instances[0].Process.FullName;
+                    this.Originator = instances[0].Originator;
+                    this.Priority = instances[0].Priority;
+                    this.ProcessId = instances[0].ProcID;
+                    this.ProcessInstanceId = instances[0].ID;
+                    this.ProcessSetId = instances[0].ProcSetID;
+                    this.StartDate = instances[0].StartDate;
+                    this.Status = instances[0].Status;
+                    //this.VersionDescription = instances[0].Process.VersionDesc;
+                    //this.VersionDate = instances[0].Process.VersionDate;
+                    //this.VersionLabel = instances[0].Process.VersionLabel;
+                    //this.VersionNumber = instances[0].Process.VersionNumber;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ResultStatus = "Exception";
+                this.ResultMessage = ex.GetBaseException().Message;
+                return this;
+            }
+            finally
+            {
+                try
+                {
+                    svr.Connection.Close();
+                    svr.Connection.Dispose();
+                }
+                catch { }
+
+                svr = null;
+            }
 
             return this;
         }
@@ -142,42 +161,59 @@ namespace K2Field.SmartObjects.Services.LIM
             List<LIM.ProcessInstance> results = new List<ProcessInstance>();
 
             WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
-            svr.Open(); 
-            ProcessInstances instances = null;
-
-            SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter filter = new SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter();
-            filter.AddRegularFilter(ProcessInstanceFields.ProcID, SourceCode.Workflow.Management.Criteria.Comparison.Equals, this.ProcessId);
-
-            instances = svr.GetProcessInstancesAll(filter);
-            
-            for (int i=0;i<instances.Count;i++)
+            try
             {
-                LIM.ProcessInstance pi = new ProcessInstance();
+                svr.Open();
+                ProcessInstances instances = null;
 
-                pi.ExecutingProcessId = instances[i].ExecutingProcID;
-                pi.ExpectedDuration = instances[i].ExpectedDuration;
-                pi.FinishDate = instances[i].FinishDate;
-                pi.Folio = instances[i].Folio;
-                pi.FullName = instances[i].ProcSetFullName;
-                //pi.IsDefaultVersion = instances[i].Process.DefaultVersion;
-                //pi.Name = instances[i].Process.FullName;
-                pi.Originator = instances[i].Originator;
-                pi.Priority = instances[i].Priority;
-                pi.ProcessId = instances[i].ProcID;
-                pi.ProcessInstanceId = instances[i].ID;
-                pi.ProcessSetId = instances[i].ProcSetID;
-                pi.StartDate = instances[i].StartDate;
-                pi.Status = instances[i].Status;
-                //pi.VersionDescription = instances[i].Process.VersionDesc;
-                //pi.VersionDate = instances[i].Process.VersionDate;
-                //pi.VersionLabel = instances[i].Process.VersionLabel;
-                //pi.VersionNumber = instances[i].Process.VersionNumber;
+                SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter filter = new SourceCode.Workflow.Management.Criteria.ProcessInstanceCriteriaFilter();
+                filter.AddRegularFilter(ProcessInstanceFields.ProcID, SourceCode.Workflow.Management.Criteria.Comparison.Equals, this.ProcessId);
 
-                results.Add(pi);
+                instances = svr.GetProcessInstancesAll(filter);
+
+                for (int i = 0; i < instances.Count; i++)
+                {
+                    LIM.ProcessInstance pi = new ProcessInstance();
+
+                    pi.ExecutingProcessId = instances[i].ExecutingProcID;
+                    pi.ExpectedDuration = instances[i].ExpectedDuration;
+                    pi.FinishDate = instances[i].FinishDate;
+                    pi.Folio = instances[i].Folio;
+                    pi.FullName = instances[i].ProcSetFullName;
+                    //pi.IsDefaultVersion = instances[i].Process.DefaultVersion;
+                    //pi.Name = instances[i].Process.FullName;
+                    pi.Originator = instances[i].Originator;
+                    pi.Priority = instances[i].Priority;
+                    pi.ProcessId = instances[i].ProcID;
+                    pi.ProcessInstanceId = instances[i].ID;
+                    pi.ProcessSetId = instances[i].ProcSetID;
+                    pi.StartDate = instances[i].StartDate;
+                    pi.Status = instances[i].Status;
+                    //pi.VersionDescription = instances[i].Process.VersionDesc;
+                    //pi.VersionDate = instances[i].Process.VersionDate;
+                    //pi.VersionLabel = instances[i].Process.VersionLabel;
+                    //pi.VersionNumber = instances[i].Process.VersionNumber;
+
+                    results.Add(pi);
+                }
             }
-            svr.Connection.Close();
-            svr.Connection.Dispose();
-            svr = null;
+            catch (Exception ex)
+            {
+                //this.ResultStatus = "Exception";
+                //this.ResultMessage = ex.GetBaseException().Message;
+                //return this;
+            }
+            finally
+            {
+                try
+                {
+                    svr.Connection.Close();
+                    svr.Connection.Dispose();
+                }
+                catch { }
+
+                svr = null;
+            }
 
             return results;
         }
@@ -191,37 +227,122 @@ namespace K2Field.SmartObjects.Services.LIM
             List<LIM.ProcessInstance> results = new List<ProcessInstance>();
 
             WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
-            svr.Open();
-            
+                        
             try
             {
+                svr.Open();
                 svr.StopProcessInstances(this.ProcessInstanceId);
+                
+                svr.SetProcessInstanceVersion(this.ProcessInstanceId, this.NewVersion);
+                
+                if (!string.IsNullOrWhiteSpace(this.ActivityName))
+                {
+                    svr.GotoActivity(this.ProcessInstanceId, ActivityName);
+                }
+                else
+                {
+                    svr.StartProcessInstances(this.ProcessInstanceId);
+                }
             }
             catch (Exception ex)
             {
-                //forcedStop = false;
-                this.ResultStatus = ex.Message;
+                this.ResultStatus = "Exception";
+                this.ResultMessage = ex.GetBaseException().Message;
                 return this;
             }
-            //migrate the instance to the selected version
-            svr.SetProcessInstanceVersion(this.ProcessInstanceId, this.NewVersion);
-            //restart the instance if it was stopped
-            
-            if (!string.IsNullOrWhiteSpace(this.ActivityName))
+            finally
             {
-                svr.GotoActivity(this.ProcessInstanceId, ActivityName);
-                //svr.StartProcessInstances(procInst.ID);
-            }
-            else
-            {
-                svr.StartProcessInstances(this.ProcessInstanceId);
+                try
+                {
+                    svr.Connection.Close();
+                    svr.Connection.Dispose();
+                }
+                catch { }
+
+                svr = null;
             }
 
             this.ResultStatus = "Success";
 
-            svr.Connection.Close();
-            svr.Connection.Dispose();
-            svr = null;
+            return this;
+        }
+
+
+        [Attributes.Method("GotoActivity", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Goto Activity", "Move a process instance from one Activity to another",
+        new string[] { "ProcessInstanceId", "ActivityName" }, //required property array (no required properties for this sample)
+        new string[] { "ProcessInstanceId", "ActivityName" }, //input property array (no optional input properties for this sample)
+        new string[] { "ProcessInstanceId", "ActivityName", "ResultStatus", "ResultMessage" })] 
+        public LIM.ProcessInstance GotoActivity()
+        {
+            List<LIM.ProcessInstance> results = new List<ProcessInstance>();
+
+            WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
+            
+            try
+            {
+                svr.Open();
+                svr.GotoActivity(this.ProcessInstanceId, this.ActivityName);
+            }
+            catch (Exception ex)
+            {
+                //forcedStop = false;
+                this.ResultStatus = "Exception";
+                this.ResultMessage = ex.GetBaseException().Message;
+                return this;
+            }
+            finally
+            {
+                try
+                {
+                    svr.Connection.Close();
+                    svr.Connection.Dispose();
+                }
+                catch { }
+
+                svr = null;
+            }
+
+            this.ResultStatus = "Success";
+           
+            return this;
+        }
+
+
+        [Attributes.Method("GotoActivities", SourceCode.SmartObjects.Services.ServiceSDK.Types.MethodType.Read, "Goto Activities", "Move a process instance from one Activity to two separate activites",
+        new string[] { "ProcessInstanceId", "ActivityName", "SecondActivityName" }, //required property array (no required properties for this sample)
+        new string[] { "ProcessInstanceId", "ActivityName", "SecondActivityName" }, //input property array (no optional input properties for this sample)
+        new string[] { "ProcessInstanceId", "ActivityName", "SecondActivityName", "ResultStatus", "ResultMessage" })]
+        public LIM.ProcessInstance GotoActivities()
+        {
+            List<LIM.ProcessInstance> results = new List<ProcessInstance>();
+
+            WorkflowManagementServer svr = new WorkflowManagementServer("localhost", 5555);
+
+            try
+            {
+                svr.Open();
+                svr.GotoActivity(this.ProcessInstanceId, this.ActivityName, this.SecondActivityName);
+            }
+            catch (Exception ex)
+            {
+                //forcedStop = false;
+                this.ResultStatus = "Exception";
+                this.ResultMessage = ex.GetBaseException().Message;
+                return this;
+            }
+            finally
+            {
+                try
+                {
+                    svr.Connection.Close();
+                    svr.Connection.Dispose();
+                }
+                catch { }
+
+                svr = null;
+            }
+
+            this.ResultStatus = "Success";
 
             return this;
         }
